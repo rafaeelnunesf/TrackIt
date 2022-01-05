@@ -16,11 +16,13 @@ export default function Login() {
     function handleLogin() {
         const promiseLogin = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login',formData)
         setLoading(true)
+        promiseLogin.then(answer=>{
+            setLoading(false)
+        })
         promiseLogin.catch(error => {
             setLoading(false)
             alert(error.response.data.message)
-        }
-        )
+        })
     }
 
     function handleSubmit(e) {
