@@ -2,24 +2,44 @@ import styled from "styled-components"
 import logo from "../assets/logo.png"
 import { useNavigate } from "react-router"
 import { useState } from "react";
+import axios from "axios";
+import Loader from "react-loader-spinner";
 
 
 
 export default function Login() {
-    const [formData, setFormData] = useState()
-    
+    const [formData, setFormData] = useState({email:'',password:''})
+    const [loading, setLoading] = useState(false)
+
     let navigate = useNavigate();
+
+    function handleLogin() {
+        const promiseLogin = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login',formData)
+        setLoading(true)
+        promiseLogin.catch(error => {
+            setLoading(false)
+            alert(error.response.data.message)
+        }
+        )
+    }
+
     function handleSubmit(e) {
-        navigate('/habits')
+        e.preventDefault()
+        console.log(formData)
+        handleLogin()
+        // navigate('/habits')
     }
     return(
         <>
             <Container>
                 <img src={logo} alt="logo"/>
-                <form>
-                    <input type="email" placeholder="email"/>
-                    <input type="password" placeholder="senha"/>
-                    <button onClick={()=>handleSubmit()}>Entrar</button>
+                <form onSubmit={handleSubmit}>
+                    <input required type="email" placeholder="email" value={formData.email}onChange={e=>setFormData({...formData,email:e.target.value})}/>
+                    <input required type="password" placeholder="senha" value={formData.password}onChange={e=>setFormData({...formData,password:e.target.value})}/>
+                    <button type='submit'>
+                        {loading?'':'Entrar'}
+                        <Loader type="Bars" color="#FAFAFA" height={25} width={25} visible={loading}/>
+                    </button>
                 </form>
                 <h1 onClick={()=>navigate('/register')}>Não tem uma conta? Cadastre-se!</h1>
             </Container>
