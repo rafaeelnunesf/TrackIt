@@ -38,7 +38,7 @@ export default function Register() {
                     <Input required disabled={loading} type="url" placeholder="imagem" value={formData.image}onChange={e=>setFormData({...formData,image:e.target.value})}/>
                     <Button type='submit' disabled={loading}>
                         {loading?'':'Cadastrar'}
-                        <Loader type="Bars" color="#FAFAFA" height={25} width={25} visible={loading}/>
+                        <Loader type="ThreeDots" color="#FAFAFA" height={43} width={55} visible={loading}/>
                     </Button>
                 </form>
                 <h1 onClick={()=>navigate('/')}>Não tem uma conta? Cadastre-se!</h1>
