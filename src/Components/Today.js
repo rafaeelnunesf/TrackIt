@@ -1,13 +1,16 @@
 import styled from "styled-components"
-import logoMenu from "../assets/logo-menu.png"
+
 import check from "../assets/check.png"
-import { useNavigate } from "react-router"
+
 import { useContext } from "react";
 import UserContext from '../Contexts/UserContext'
-import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
-import 'react-circular-progressbar/dist/styles.css';
+
+
 import 'dayjs/locale/es'
 import dayjs from "dayjs";
+
+import Top from "./Top";
+import Menu from "./Menu";
 
 export default function Today() {
     const {userData} = useContext(UserContext)
@@ -76,14 +79,11 @@ export default function Today() {
             highestSequence: 1
         }
     ]
-    const percentage = 20;
+    
     console.log(userData.image)
     return(
         <Container>
-            <Top>
-                <img src={logoMenu} alt='logo-menu'/>
-                <img src={userData.image} alt='logo-menu'/>
-            </Top>
+            <Top/>
             <Day>
                 <h1>{`${dayjs().format('dddd, DD/MM')}`}</h1>
                 <h2>Nenhum hábito concluído ainda</h2>
@@ -101,23 +101,7 @@ export default function Today() {
                     </Habit>
                 ))}
             </Habits>
-            <Menu>
-                <h1>Habitos</h1>
-                <CircularProgressbar 
-                    value={percentage}
-                    text={`Hoje`}
-                    background
-                    backgroundPadding={6}
-                    styles={buildStyles({
-                        backgroundColor: "#52B6FF",
-                        textColor: "#fff",
-                        textSize: '18px',
-                        pathColor: "#fff",
-                        trailColor: "transparent"
-                      })}
-                />
-                <h1>Histórico</h1>
-            </Menu>
+            <Menu/>
         </Container>
     )
 }
@@ -134,68 +118,6 @@ const Container = styled.div`
     margin: 0 auto;
     
     background: #F2F2F2;
-`
-const Top = styled.div`
-    width: 375px;
-    height: 70px;
-    position:sticky;
-    top:0;
-    z-index:1;
-
-    box-sizing:border-box;
-    padding: 10px 18px;
-
-    display:flex;
-    justify-content: space-between;
-    align-items:center;
-
-    background: #126BA5;
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.15);
-    img:first-child{
-        max-height:35px;
-    }
-    img:last-child{
-        width: 51px;
-        height: 51px;
-        border-radius: 100px;
-    }
-`
-const Menu = styled.div`
-    width: 375px;
-    height: 70px;
-
-    position:absolute;
-    bottom:0;
-    z-index:1;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    box-sizing:border-box;
-    padding: 25px 35px;
-
-
-    background: #FFFFFF;
-    /* background:red; */
-    h1{
-        font-family: Lexend Deca;
-        font-size: 18px;
-        line-height: 22px;
-        text-align: center;
-
-        color: #52B6FF;
-    }
-    svg{
-        width:91px;
-        height:91px;
-        position:absolute;
-        bottom:10px;
-        left:0;
-        right:0;
-        margin: auto;
-        
-    }
 `
 const Day = styled.div`
     height:105px;

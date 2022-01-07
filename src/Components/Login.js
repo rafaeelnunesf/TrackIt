@@ -22,7 +22,6 @@ export default function Login() {
         const promiseLogin = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login',formData)
         promiseLogin.then(answer=>{
             setLoading(false)
-            console.log(answer.data)
             setUserData({image:answer.data.image,token:answer.data.token})
             navigate('/today')
         })
