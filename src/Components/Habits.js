@@ -15,8 +15,17 @@ export default function Habits() {
     const [loading, setLoading] = useState(false)
     const [habitName, setHabitName] = useState('')
     const [habitDays, setHabitDays] = useState([])
-    
+
     const {userData} = useContext(UserContext)
+
+    const weekDays = [{indexDay:0,nameDay:'D'},
+    {indexDay:1,nameDay:'S'},
+    {indexDay:2,nameDay:'T'},
+    {indexDay:3,nameDay:'Q'},
+    {indexDay:4,nameDay:'Q'},
+    {indexDay:5,nameDay:'S'},
+    {indexDay:6,nameDay:'S'}]
+
     function getHabits() {
         const config = {
             headers: {
@@ -25,27 +34,23 @@ export default function Habits() {
         }
         const promiseHabits = axios.get('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits',config)
         promiseHabits.then(answer=>{
-            console.log(answer.data)
+            // console.log(answer.data)
             setHabits(answer.data)
         })
     }
+
     useEffect(getHabits,[])
-    // console.log(habitName)
-    // console.log(habitDays)
-    // console.log(habitDays.includes(0))
+
     function addDay(day) {
-        let habits = habitDays.sort((a,b)=>a-b)
+        // habitDays.sort((a,b)=>a-b)
         if(habitDays.includes(day)){
-            // console.log(habitDays.indexOf(day))
             habitDays.splice(habitDays.indexOf(day),1)
-            setHabitDays(habits)
-            // console.log(habitDays)
+            setHabitDays([...habitDays])
         }else{
-            console.log('não tava clicado antes')
-            setHabitDays([...habits,day])
-            // console.log(habits)
+            setHabitDays([...habitDays,day])
         }
     }
+    
     function handleSubmit(e) {
         setLoading(true)
         e.preventDefault()
@@ -58,16 +63,30 @@ export default function Habits() {
                 "Authorization": `Bearer ${userData.token}`
             }
         }
+        if(habitDays.length===0){
+            alert('Escolha pelo menos um dia da semana')
+            setLoading(false)
+            return
+        }
+        if(habitName===''){
+            alert('O campo de nome não pode estar vazio')
+            setLoading(false)
+            return
+        }
         const promisePostHabits = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits',body,config)
         promisePostHabits.then(answer=>{
             setLoading(false)
-            console.log(answer.data)
             setHabits([...habits,answer.data])
             setHabitCriationEnabled(false)
+            setHabitDays([])
+            setHabitName('')
         })
-        setHabitDays([])
-        setHabitName('')
+        promisePostHabits.catch(error=>{
+            alert(error.response.data.details);
+            setLoading(false)
+        })
     }
+
     function deleteHabit(id) {
 
         if (window.confirm("Você deseja apagar o hábito?")){
@@ -78,7 +97,7 @@ export default function Habits() {
             }
             const promiseDeleteHabits = axios.delete(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}`,config)
             promiseDeleteHabits.then(answer=>{
-                console.log(answer.data)
+                // console.log(answer.data)
                 let habits = answer.data
                 setHabits(habits)
                 setHabitCriationEnabled(false)
@@ -86,7 +105,7 @@ export default function Habits() {
             })
         }
     }
-    console.log(habits)
+    
     return(
         <Container>
             <Top/>
@@ -94,19 +113,14 @@ export default function Habits() {
                 <p>Meus hábitos</p>
                 <Button image={plus} onClick={()=>setHabitCriationEnabled(true)}></Button>
             </MyHabits>
-
             {habitCriationEnabled&&
             <CreateHabit onSubmit={(e)=>handleSubmit(e)}>
                 <div>
                     <Input disabled={loading} placeholder='nome do habito' value={habitName} onChange={(e)=>setHabitName(e.target.value)}></Input>
                     <div>
-                        <Day type='button' onClick={()=>addDay(0)} wasClicked={habitDays.includes(0)?true:false}>D</Day>
-                        <Day type='button' onClick={()=>addDay(1)} wasClicked={habitDays.includes(1)?true:false}>S</Day>
-                        <Day type='button' onClick={()=>addDay(2)} wasClicked={habitDays.includes(2)?true:false}>T</Day>
-                        <Day type='button' onClick={()=>addDay(3)} wasClicked={habitDays.includes(3)?true:false}>Q</Day>
-                        <Day type='button' onClick={()=>addDay(4)} wasClicked={habitDays.includes(4)?true:false}>Q</Day>
-                        <Day type='button' onClick={()=>addDay(5)} wasClicked={habitDays.includes(5)?true:false}>S</Day>
-                        <Day type='button' onClick={()=>addDay(6)} wasClicked={habitDays.includes(6)?true:false}>S</Day>
+                        {weekDays.map(({indexDay,nameDay})=>(
+                            <Day type='button' onClick={()=>addDay(indexDay)} disabled={loading} wasClicked={habitDays.includes(indexDay)?true:false}>{nameDay}</Day>
+                        ))}
                     </div>
                 </div>
                 <FooterButtons>
@@ -117,7 +131,6 @@ export default function Habits() {
                     </SubmitButton>
                 </FooterButtons>
             </CreateHabit>}
-            
             {habits.length === 0?
             <Message>Você não tem nenhum hábito cadastrado ainda. Adicione um hábito para começar a trackear!</Message>
             : 
@@ -126,13 +139,9 @@ export default function Habits() {
                     <Habit>
                         <p>{name}</p>
                         <div>
-                            <Day wasClicked={days.includes(0)?true:false}>D</Day>
-                            <Day wasClicked={days.includes(1)?true:false}>S</Day>
-                            <Day wasClicked={days.includes(2)?true:false}>T</Day>
-                            <Day wasClicked={days.includes(3)?true:false}>Q</Day>
-                            <Day wasClicked={days.includes(4)?true:false}>Q</Day>
-                            <Day wasClicked={days.includes(5)?true:false}>S</Day>
-                            <Day wasClicked={days.includes(6)?true:false}>S</Day>
+                            {weekDays.map(({indexDay,nameDay})=>(
+                                <Day wasClicked={days.includes(indexDay)?true:false}>{nameDay}</Day>
+                            ))}
                         </div>
                         <Delete image={trash} onClick={()=>deleteHabit(id)}/>
                     </Habit>
@@ -143,6 +152,7 @@ export default function Habits() {
         </Container>
     )
 }
+
 const Container = styled.div`
     width: 375px;
     height: 100vh;
@@ -202,6 +212,7 @@ const CreateHabit = styled.form`
     border-radius: 5px;
     box-sizing:border-box;
     padding: 16px;
+    margin-bottom:10px;
 
     display:flex;
     flex-direction:column;
