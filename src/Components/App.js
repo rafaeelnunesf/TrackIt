@@ -7,21 +7,25 @@ import Today from './Today'
 import Historic from './Historic'
 import { useState } from "react";
 import UserContext from "../Contexts/UserContext";
+import PercentageDoneContext from "../Contexts/PercentageDoneContext";
 
 
 export default function App() {
     const [userData , setUserData] = useState({image:'',token:''})
+    const [percentageDone, setPercentageDone] = useState(0)
     return(
         <UserContext.Provider value={{userData, setUserData}}>
-            <BrowserRouter>
-                <Routes>
-                    <Route path="/" element={<Login/>}/>
-                    <Route path="/register" element={<Register/>}/>
-                    <Route path="/today" element={<Today/>}/>
-                    <Route path="/habits" element={<Habits/>}/>
-                    <Route path="/historic" element={<Historic/>}/>
-                </Routes>
-            </BrowserRouter>
+            <PercentageDoneContext.Provider value={{percentageDone,setPercentageDone}}>
+                <BrowserRouter>
+                    <Routes>
+                        <Route path="/" element={<Login/>}/>
+                        <Route path="/register" element={<Register/>}/>
+                        <Route path="/today" element={<Today/>}/>
+                        <Route path="/habits" element={<Habits/>}/>
+                        <Route path="/historic" element={<Historic/>}/>
+                    </Routes>
+                </BrowserRouter>
+            </PercentageDoneContext.Provider>
         </UserContext.Provider>
     )
 }

@@ -2,16 +2,18 @@ import styled from "styled-components"
 import { useNavigate } from "react-router"
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import PercentageDoneContext from "../Contexts/PercentageDoneContext";
+import { useContext } from "react/cjs/react.development";
 
 export default function Menu() {
-    const percentage = 20;
+    const {percentageDone} = useContext(PercentageDoneContext)
     let navigate = useNavigate()
     return(
         <Container>
             <h1 onClick={()=>navigate('/habits')}>Habitos</h1>
                 <div onClick={()=>navigate('/today')}>
                     <CircularProgressbar
-                        value={percentage}
+                        value={percentageDone}
                         text={`Hoje`}
                         background
                         backgroundPadding={6}

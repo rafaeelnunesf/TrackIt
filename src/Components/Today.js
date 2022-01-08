@@ -4,6 +4,7 @@ import check from "../assets/check.png"
 
 import { useContext } from "react";
 import UserContext from '../Contexts/UserContext'
+import PercentageDoneContext from "../Contexts/PercentageDoneContext";
 
 
 import 'dayjs/locale/es'
@@ -11,85 +12,64 @@ import dayjs from "dayjs";
 
 import Top from "./Top";
 import Menu from "./Menu";
+import { useEffect, useState } from "react/cjs/react.development";
+import axios from "axios";
 
 export default function Today() {
     const {userData} = useContext(UserContext)
-    const habitosDeHoje = [
-        {
-            id: 3,
-            name: 'Acordar',
-            done: true,
-            currentSequence: 1,
-            highestSequence: 1
-        },
-        {
-            id: 5,
-            name: 'mijar',
-            done: false,
-            currentSequence: 1,
-            highestSequence: 1
-        },
-        {
-            id: 5,
-            name: 'beber agua',
-            done: true,
-            currentSequence: 4,
-            highestSequence: 5
-        },
-        {
-            id: 3,
-            name: 'Acordar',
-            done: true,
-            currentSequence: 1,
-            highestSequence: 1
-        },
-        {
-            id: 5,
-            name: 'mijar',
-            done: true,
-            currentSequence: 1,
-            highestSequence: 1
-        },
-        {
-            id: 5,
-            name: 'beber agua',
-            done: true,
-            currentSequence: 1,
-            highestSequence: 1
-        },
-        {
-            id: 3,
-            name: 'Acordar',
-            done: true,
-            currentSequence: 1,
-            highestSequence: 1
-        },
-        {
-            id: 5,
-            name: 'mijar',
-            done: true,
-            currentSequence: 1,
-            highestSequence: 1
-        },
-        {
-            id: 5,
-            name: 'beber agua',
-            done: true,
-            currentSequence: 1,
-            highestSequence: 1
+    const { percentageDone ,setPercentageDone} = useContext(PercentageDoneContext)
+    const [todayHabits, setTodayHabits] = useState([])
+
+    function getTodayHabits() {
+        
+        const config = {
+            headers: {
+                "Authorization": `Bearer ${userData.token}`
+            }
         }
-    ]
+        const promiseHabits = axios.get('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today',config)
+        promiseHabits.then(answer=>{
+            setTodayHabits(answer.data)
+        })
+    }
+
+    let countHabitsDone = 0
+    todayHabits.forEach(habit => habit.done === true && countHabitsDone++)
+    if(todayHabits.length!==0)
+        setPercentageDone((countHabitsDone / todayHabits.length)*100)
+    useEffect(getTodayHabits,[])
+
+    function markAsDone(id) {
+        const config = {
+            headers: {
+                "Authorization": `Bearer ${userData.token}`
+            }
+        }
+        todayHabits.forEach((habit,i)=>{
+            if (habit.id === id && habit.done === false){
+                const promiseCheck = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/check`,'',config)
+                promiseCheck.then(getTodayHabits)
+                promiseCheck.catch((error)=>console.log(error.response.data))
+            }else if(habit.id === id && habit.done === true){
+                const promiseUncheck = axios.post(`https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/${id}/uncheck`,'',config)
+                promiseUncheck.then(getTodayHabits)
+                promiseUncheck.catch((error)=>console.log(error.response.data))
+            }
+        })
+    }
     
-    console.log(userData.image)
     return(
         <Container>
             <Top/>
             <Day>
                 <h1>{`${dayjs().format('dddd, DD/MM')}`}</h1>
+                {(percentageDone===0 || percentageDone===isNaN)?
                 <h2>Nenhum hábito concluído ainda</h2>
+                :
+                <h2>{`${percentageDone.toFixed(0)}% do hábitos concluídos`}</h2>}
             </Day>
             <Habits>
-                {habitosDeHoje.map(({name,done,currentSequence,highestSequence})=>(
+                {todayHabits.map(({id,name,done,currentSequence,highestSequence})=>(
                     <Habit>
                         <p>{name}</p>
                         <div>
@@ -97,7 +77,7 @@ export default function Today() {
                             <br/>
                             <Sequence hasColor={done && currentSequence===highestSequence} >Seu recorde: <strong>{`${highestSequence} dias`}</strong></Sequence>
                         </div>
-                        <Done done={done} image={check}/>
+                        <Done done={done} image={check} onClick={()=>markAsDone(id)}/>
                     </Habit>
                 ))}
             </Habits>
