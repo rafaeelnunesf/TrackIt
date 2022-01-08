@@ -7,6 +7,7 @@ import axios from "axios"
 import { useContext, useEffect, useState } from "react"
 import UserContext from '../Contexts/UserContext'
 import Loader from "react-loader-spinner";
+import PercentageDoneContext from "../Contexts/PercentageDoneContext"
 
 
 export default function Habits() {
@@ -15,6 +16,8 @@ export default function Habits() {
     const [loading, setLoading] = useState(false)
     const [habitName, setHabitName] = useState('')
     const [habitDays, setHabitDays] = useState([])
+    const [todayHabits, setTodayHabits] = useState([])
+    const { setPercentageDone} = useContext(PercentageDoneContext)
 
     const {userData} = useContext(UserContext)
 
@@ -34,10 +37,26 @@ export default function Habits() {
         }
         const promiseHabits = axios.get('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits',config)
         promiseHabits.then(answer=>{
-            // console.log(answer.data)
             setHabits(answer.data)
         })
     }
+    function getTodayHabits() {
+        const config = {
+            headers: {
+                "Authorization": `Bearer ${userData.token}`
+            }
+        }
+        const promiseHabits = axios.get('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today',config)
+        promiseHabits.then(answer=>{
+            setTodayHabits(answer.data)
+        })
+    }
+    let countHabitsDone = 0
+    todayHabits.forEach(habit => habit.done === true && countHabitsDone++)
+    if(todayHabits.length!==0)
+        setPercentageDone((countHabitsDone / todayHabits.length)*100)
+
+    useEffect(getTodayHabits,[])
 
     useEffect(getHabits,[])
 
@@ -50,7 +69,6 @@ export default function Habits() {
             setHabitDays([...habitDays,day])
         }
     }
-    
     function handleSubmit(e) {
         setLoading(true)
         e.preventDefault()
@@ -80,6 +98,10 @@ export default function Habits() {
             setHabitCriationEnabled(false)
             setHabitDays([])
             setHabitName('')
+            const promiseHabits = axios.get('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today',config)
+            promiseHabits.then(answer=>{
+                setTodayHabits(answer.data)
+            })
         })
         promisePostHabits.catch(error=>{
             alert(error.response.data.details);
@@ -102,10 +124,14 @@ export default function Habits() {
                 setHabits(habits)
                 setHabitCriationEnabled(false)
                 getHabits()
+                const promiseHabits = axios.get('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/habits/today',config)
+                promiseHabits.then(answer=>{
+                    setTodayHabits(answer.data)
+                })
             })
         }
     }
-    
+    console.log(habits)
     return(
         <Container>
             <Top/>

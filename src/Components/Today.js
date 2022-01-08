@@ -21,7 +21,6 @@ export default function Today() {
     const [todayHabits, setTodayHabits] = useState([])
 
     function getTodayHabits() {
-        
         const config = {
             headers: {
                 "Authorization": `Bearer ${userData.token}`
@@ -33,12 +32,8 @@ export default function Today() {
         })
     }
 
-    let countHabitsDone = 0
-    todayHabits.forEach(habit => habit.done === true && countHabitsDone++)
-    if(todayHabits.length!==0)
-        setPercentageDone((countHabitsDone / todayHabits.length)*100)
     useEffect(getTodayHabits,[])
-
+    
     function markAsDone(id) {
         const config = {
             headers: {
@@ -58,6 +53,11 @@ export default function Today() {
         })
     }
     
+    let countHabitsDone = 0
+    todayHabits.forEach(habit => habit.done === true && countHabitsDone++)
+    if(todayHabits.length!==0)
+        setPercentageDone((countHabitsDone / todayHabits.length)*100)
+
     return(
         <Container>
             <Top/>
