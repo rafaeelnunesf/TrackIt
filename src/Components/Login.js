@@ -6,6 +6,7 @@ import axios from "axios";
 import Loader from "react-loader-spinner";
 import { useContext } from "react";
 import UserContext from '../Contexts/UserContext'
+import { useEffect } from "react/cjs/react.development";
 
 
 
@@ -16,6 +17,22 @@ export default function Login() {
 
     let navigate = useNavigate();
 
+    const serializedUserData = JSON.parse(localStorage.getItem('UsersList'))
+
+    useEffect(()=>{
+        if(serializedUserData!==null){
+            setFormData(serializedUserData)
+        }
+    },[])
+    useEffect(()=>{
+        const promiseLogin = axios.post('https://mock-api.bootcamp.respondeai.com.br/api/v2/trackit/auth/login',formData)
+        promiseLogin.then(answer=>{
+            setUserData({image:answer.data.image,token:answer.data.token})
+            navigate('/today')
+        })
+    },[formData])
+
+
     function handleSubmit(e) {
         setLoading(true)
         e.preventDefault()
@@ -23,6 +40,9 @@ export default function Login() {
         promiseLogin.then(answer=>{
             setLoading(false)
             setUserData({image:answer.data.image,token:answer.data.token})
+            const serializedDataLogin = JSON.stringify({email:answer.data.email,password:answer.data.password})
+            console.log(serializedDataLogin);
+            localStorage.setItem("UsersList", serializedDataLogin)
             navigate('/today')
         })
         promiseLogin.catch(error => {
@@ -34,6 +54,7 @@ export default function Login() {
             setLoading(false)
         })
     }
+    
     return(
         <>
             <Container>
