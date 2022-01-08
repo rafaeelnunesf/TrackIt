@@ -200,7 +200,7 @@ const MyHabits = styled.div`
     justify-content:space-between;
 
     box-sizing:border-box;
-    padding: 22px 0;
+    padding: 28px 0;
     p{
         font-family: Lexend Deca;
         font-size: 22.976px;

@@ -64,9 +64,9 @@ export default function Today() {
             <Day>
                 <h1>{`${dayjs().format('dddd, DD/MM')}`}</h1>
                 {(percentageDone===0 || percentageDone===isNaN)?
-                <h2>Nenhum hábito concluído ainda</h2>
+                <DayProgrss hasColor={false}>Nenhum hábito concluído ainda</DayProgrss>
                 :
-                <h2>{`${percentageDone.toFixed(0)}% do hábitos concluídos`}</h2>}
+                <DayProgrss hasColor={true}>{`${percentageDone.toFixed(0)}% do hábitos concluídos`}</DayProgrss>}
             </Day>
             <Habits>
                 {todayHabits.map(({id,name,done,currentSequence,highestSequence})=>(
@@ -112,15 +112,14 @@ const Day = styled.div`
 
         color: #126BA5;
     }
-    h2{
-        font-family: Lexend Deca;
-        font-size: 17.976px;
-        line-height: 22px;
-
-        color: #BABABA;
-    }
 `
+const DayProgrss = styled.h2`
+    font-family: Lexend Deca;
+    font-size: 17.976px;
+    line-height: 22px;
 
+    color: ${({hasColor}) => hasColor?'#8FC549':'#BABABA'};
+`
 const Habits = styled.div`
     width: 340px;
     max-height:65vh;
