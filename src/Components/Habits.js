@@ -8,6 +8,7 @@ import { useContext, useEffect, useState } from "react"
 import UserContext from '../Contexts/UserContext'
 import Loader from "react-loader-spinner";
 import PercentageDoneContext from "../Contexts/PercentageDoneContext"
+import { useNavigate } from "react-router"
 
 
 export default function Habits() {
@@ -21,6 +22,8 @@ export default function Habits() {
 
     const {userData} = useContext(UserContext)
 
+    let navigate = useNavigate()
+
     const weekDays = [{indexDay:0,nameDay:'D'},
     {indexDay:1,nameDay:'S'},
     {indexDay:2,nameDay:'T'},
@@ -30,6 +33,10 @@ export default function Habits() {
     {indexDay:6,nameDay:'S'}]
 
     function getHabits() {
+        if(userData===null){
+            navigate('/')
+            return
+        }
         const config = {
             headers: {
                 "Authorization": `Bearer ${userData.token}`
@@ -41,6 +48,10 @@ export default function Habits() {
         })
     }
     function getTodayHabits() {
+        if(userData===null){
+            navigate('/')
+            return
+        }
         const config = {
             headers: {
                 "Authorization": `Bearer ${userData.token}`

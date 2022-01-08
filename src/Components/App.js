@@ -11,10 +11,19 @@ import PercentageDoneContext from "../Contexts/PercentageDoneContext";
 
 
 export default function App() {
-    const [userData , setUserData] = useState({image:'',token:''})
+    const userDataOnLocalStorage = localStorage.getItem("UserData")
+    const serializedUserData = JSON.parse(userDataOnLocalStorage)
+
+    const [userData , setUserData] = useState(serializedUserData)
     const [percentageDone, setPercentageDone] = useState(0)
+    
+    function setAndPersistUserData(userData) {
+		setUserData({...userData});
+        const serializedUserData = JSON.stringify(userData)
+		localStorage.setItem("UserData", serializedUserData);
+	}
     return(
-        <UserContext.Provider value={{userData, setUserData}}>
+        <UserContext.Provider value={{userData, setUserData,setAndPersistUserData}}>
             <PercentageDoneContext.Provider value={{percentageDone,setPercentageDone}}>
                 <BrowserRouter>
                     <Routes>

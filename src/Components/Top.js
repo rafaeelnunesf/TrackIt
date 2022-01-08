@@ -9,7 +9,7 @@ export default function Top() {
     return(
         <Container>
             <img src={logoMenu} alt='logo-menu'/>
-            <img src={userData.image} alt='logo-menu'/>
+            <img src={userData===null?'':userData.image} alt='logo-menu'/>
         </Container>
     )
 }

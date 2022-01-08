@@ -14,13 +14,20 @@ import Top from "./Top";
 import Menu from "./Menu";
 import { useEffect, useState } from "react/cjs/react.development";
 import axios from "axios";
+import { useNavigate } from "react-router";
 
 export default function Today() {
     const {userData} = useContext(UserContext)
     const { percentageDone ,setPercentageDone} = useContext(PercentageDoneContext)
     const [todayHabits, setTodayHabits] = useState([])
-
+    let navigate = useNavigate()
+    
+    
     function getTodayHabits() {
+        if(userData===null){
+            navigate('/')
+            return
+        }
         const config = {
             headers: {
                 "Authorization": `Bearer ${userData.token}`
@@ -31,7 +38,7 @@ export default function Today() {
             setTodayHabits(answer.data)
         })
     }
-
+    
     useEffect(getTodayHabits,[])
     
     function markAsDone(id) {
