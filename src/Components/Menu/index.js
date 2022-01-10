@@ -1,9 +1,10 @@
-import styled from "styled-components"
 import { useNavigate } from "react-router"
+import { useContext } from "react";
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
-import PercentageDoneContext from "../Contexts/PercentageDoneContext";
-import { useContext } from "react/cjs/react.development";
+
+import PercentageDoneContext from "../../Contexts/PercentageDoneContext";
+import { Container } from "./styles";
 
 export default function Menu() {
     const {percentageDone} = useContext(PercentageDoneContext)
@@ -30,41 +31,3 @@ export default function Menu() {
         </Container>
     )
 }
-
-const Container = styled.div`
-    width: 375px;
-    height: 70px;
-
-    position:absolute;
-    bottom:0;
-    z-index:1;
-
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-
-    box-sizing:border-box;
-    padding: 25px 35px;
-
-
-    background: #FFFFFF;
-    /* background:red; */
-    h1{
-        font-family: Lexend Deca;
-        font-size: 18px;
-        line-height: 22px;
-        text-align: center;
-
-        color: #52B6FF;
-    }
-    svg{
-        width:91px;
-        height:91px;
-        position:absolute;
-        bottom:10px;
-        left:0;
-        right:0;
-        margin: auto;
-        
-    }
-`

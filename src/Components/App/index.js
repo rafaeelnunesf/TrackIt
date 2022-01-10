@@ -1,14 +1,15 @@
-import "./reset.css"
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Login from "./Login";
-import Register from "./Register";
-import Habits from './Habits'
-import Today from './Today'
-import Historic from './Historic'
-import { useState } from "react";
-import UserContext from "../Contexts/UserContext";
-import PercentageDoneContext from "../Contexts/PercentageDoneContext";
+import "../reset.css"
 
+import PercentageDoneContext from "../../Contexts/PercentageDoneContext";
+import UserContext from "../../Contexts/UserContext";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
+
+import Login from "../Login/";
+import Register from "../Register/";
+import Habits from '../Habits/'
+import Today from '../Today/'
+import Historic from '../Historic/'
 
 export default function App() {
     const userDataOnLocalStorage = localStorage.getItem("UserData")
