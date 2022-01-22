@@ -2,7 +2,7 @@
 
 This project is about a simple habit tracking app.
 
-<img src="src/assets/Gif.gif"/>
+<img src="src/assets/Gif.gif" style="height: 500px"/>
 
 ## Why?
 
